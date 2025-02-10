@@ -1,0 +1,39 @@
+import os
+import google.generativeai as genai
+
+genai.configure(api_key=os.environ["GEMINI_API_KEY"])
+
+# Create the model
+generation_config = {
+  "temperature": 0.5,
+  "top_p": 0.95,
+  "top_k": 40,
+  "max_output_tokens": 8192,
+  "response_mime_type": "text/plain",
+}
+
+model = genai.GenerativeModel(
+  model_name="gemini-1.5-flash",
+  generation_config=generation_config,
+)
+
+chat_session = model.start_chat(
+  history=[
+    {
+      "role": "user",
+      "parts": [
+        "you are 1mDC the chatbot who helps with survey. People will ask you about various questions related to survey and you will answer based on data that I give to you. You can also search the internet to come up with answer that are not included in the data.\n\n\"input: Company\",\n  \"output: Manufacturing\",\n  \"input: Company\",\n  \"output: Information technology\",\n  \"input: Company\",\n  \"output: Construction\",\n  \"input: Company\",\n  \"output: Transportation\",\n  \"input: Job description\",\n  \"output: Information technology\",\n  \"input: Job description\",\n  \"output: Human resource\",\n  \"input: company annual revenue\",\n  \"output: 100m - 500m\",\n  \"input: Hispanic or not\",\n  \"output: yes\",\n  \"input: own a car\",\n  \"output: yes\",\n  \"input: Annual income before tax\",\n  \"output: 200000\",\n  \"input: Annual income before tax\",\n  \"output: 150000 - 200000\",\n  \"input: Annual income before tax\",\n  \"output: 175000 - 200000\",\n  \"input: Are you registered to vote?\",\n  \"output: yes\",\n  \"input: pet in house\",\n  \"output: cat & dog\",\n  \"input: do you have any pets in house\",\n  \"output: cat & dog\",\n  \"input: pet\",\n  \"output: cat & dog\",\n  \"input: housing situation\",\n  \"output: homeowner\",\n  \"input: do you own a house\",\n  \"output: yes\",\n  \"input: investable assets\",\n  \"output: more than 500000, less than 999999\",\n  \"input: Job Title\",\n  \"output: CTO\",\n  \"input: Job Responsibility\",\n  \"output: Director\",\n  \"input: Job Title\",\n  \"output: chief technology officer\",\n  \"input: Job Title\",\n  \"output: chief information officer\",\n  \"input: have you participated in any survey before\",\n  \"output: no\",\n  \"input: Please indicate which racial or ethnic categories you most identify with.\",\n  \"output: white\",\n  \"input: Please indicate which racial or ethnic categories you most identify with.\",\n  \"output: hispanic or latino\",\n  \"input: race\",\n  \"output: white\",\n  \"input: race\",\n  \"output: hispanic\",\n  \"input: Are you, or is anyone in your household, employed in any of the following industries?\",\n  \"output: none of the above\",\n  \"input: job sector\",\n  \"output: IT\",\n  \"input: television or streaming service watch per week\",\n  \"output: 20 hours plus\",\n  \"input: video subscription\",\n  \"output: Netflix, hulu, amazon prime, apple tv+, Disney +\",\n  \"input: Music streaming subscriptions\",\n  \"output: youtube music, Spotify\",\n  \"input: movies watched in theatre in the past 12 months\",\n  \"output: 10\",\n  \"input: movies watched in theatre in the past 6 months\",\n  \"output: 4-6\",\n  \"input: movies watched in the past 2 months\",\n  \"output: 1\",\n  \"input: playing video games per week\",\n  \"output: 10-20 hours\",\n  \"input: household yearly income\",\n  \"output: 100000 to 200000\",\n  \"input: TV subscription\",\n  \"output: DishTV, Fios-verizon, Direct tv\",\n  \"input: the highest level of education? \",\n  \"output: postgraduate/Masters/MA\",\n  \"input: Do you suffer from any of these?\",\n  \"output: Type 2 diabetes. COPD, migraine\",\n  \"input: credit score\",\n  \"output: 600 to 799 \",\n  \"input: \",\n  \"output: \",\n  \"input: \",\n  \"output: \",\n  \"input: \",\n  \"output: \",\n  \"input: \",\n  \"output: \",\n  \"input: \",\n  \"output: \",\n\n\n\n\nIf you find any question similar to this, you will respond based on the above output. If you find question related to survey that are not included, search the internet to give the right answer.\n\n",
+      ],
+    },
+    {
+      "role": "model",
+      "parts": [
+        "Okay, I'm ready to answer survey-related questions based on the provided data and my ability to search the internet.  Ask away!\n",
+      ],
+    },
+  ]
+)
+
+response = chat_session.send_message("INSERT_INPUT_HERE")
+
+print(response.text)
