@@ -40,6 +40,7 @@ task = "packager.installForAll"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "python main.py"
+waitForPort = 5000
 
 [[workflows.workflow]]
 name = "Debug Chatbot"
@@ -85,3 +86,7 @@ args = "python3 -u test_input.py"
 
 [deployment]
 run = ["sh", "-c", "python main.py"]
+
+[[ports]]
+localPort = 5000
+externalPort = 80

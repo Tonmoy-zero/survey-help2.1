@@ -3,6 +3,7 @@ import logging
 from config import verify_api_key
 from chat_handler import ChatHandler
 from error_handler import handle_error
+from flask import Flask
 
 # Configure logging
 logging.basicConfig(
@@ -14,6 +15,8 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(__name__)
+
+app = Flask(__name__)
 
 def get_user_input() -> str:
     """Get user input with proper error handling."""
@@ -42,6 +45,13 @@ def get_user_input() -> str:
             print(f"\nError reading input: {str(e)}", flush=True)
             continue
 
+@app.route('/')
+def index():
+    return """
+    <h1>Survey Chatbot</h1>
+    <p>Welcome to the Survey Chatbot! Ask questions about the survey data.</p>
+    """
+
 def main():
     """Main entry point for the survey chatbot."""
     try:
@@ -54,44 +64,8 @@ def main():
         chat_handler = ChatHandler(api_key)
         logger.info("Chat handler initialized successfully")
 
-        # Welcome message with explicit flush
-        sys.stdout.write("\n=== Survey Chatbot ===\n")
-        sys.stdout.write("Ask me anything about the survey data!\n")
-        sys.stdout.write("Type 'quit' to exit.\n")
-        sys.stdout.write("=" * 35 + "\n")
-        sys.stdout.flush()
-
-        # Main interaction loop
-        while True:
-            try:
-                user_input = get_user_input()
-
-                # Check for quit command
-                if user_input.lower() in ['quit', 'exit', 'bye']:
-                    sys.stdout.write("\nThank you for using the Survey Chatbot. Goodbye!\n")
-                    sys.stdout.flush()
-                    break
-
-                # Handle empty input
-                if not user_input:
-                    sys.stdout.write("Please type a question or 'quit' to exit.\n")
-                    sys.stdout.flush()
-                    continue
-
-                # Process question and get response
-                logger.info("Processing question...")
-                response = chat_handler.process_question(user_input)
-                logger.info("Response generated successfully")
-
-                # Print response with explicit flush
-                sys.stdout.write(f"\nChatbot: {response}\n")
-                sys.stdout.flush()
-
-            except Exception as e:
-                error_msg = handle_error(e, "processing your question")
-                sys.stdout.write(f"\nError: {error_msg}\n")
-                sys.stdout.flush()
-                continue
+        # Run the Flask application
+        app.run(host='0.0.0.0', port=5000)
 
     except Exception as e:
         error_msg = handle_error(e, "running the chatbot")

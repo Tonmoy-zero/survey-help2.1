@@ -1,17 +1,26 @@
-# Clone the repository
-   git clone <your-repository-url>
+git clone <your-repository-url>
    cd <repository-name>
-
-   # Install dependencies
-   pip install google-generativeai flask-login flask-wtf oauthlib twilio
-
-   # Set up environment variable locally
-   export GEMINI_API_KEY=your_api_key_here  # Linux/Mac
-   # or
-   set GEMINI_API_KEY=your_api_key_here     # Windows
    ```
 
-4. **Running the Application**
+2. **Set Up GitHub Secrets**
+   - Go to your GitHub repository settings
+   - Navigate to "Secrets and variables" > "Actions"
+   - Add a new repository secret named "GEMINI_API_KEY" with your API key
+
+3. **Install Dependencies Locally**
+   ```bash
+   pip install google-generativeai flask-login flask-wtf oauthlib twilio
+   ```
+
+4. **Set Up Environment Variables Locally**
+   ```bash
+   # For Linux/Mac
+   export GEMINI_API_KEY=your_api_key_here
+   # For Windows
+   set GEMINI_API_KEY=your_api_key_here
+   ```
+
+5. **Run the Application**
    ```bash
    python main.py
    ```
