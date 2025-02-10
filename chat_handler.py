@@ -41,6 +41,12 @@ class ChatHandler:
             )
             self.chat_session = self.initialize_chat()
             logger.info("Model setup completed successfully")
+            # Test the model with a simple query
+            test_response = self.chat_session.send_message("Test connection")
+            if test_response.text:
+                logger.info("Model test response successful")
+            else:
+                logger.warning("Model test response was empty")
         except Exception as e:
             logger.error(f"Model setup failed: {str(e)}")
             raise APIError(f"Failed to initialize Gemini AI model: {str(e)}")
@@ -53,17 +59,56 @@ class ChatHandler:
             Initialized chat session
         """
         try:
-            survey_context = """You are 1mDC, a survey-focused chatbot. Based on the survey data:
-            - Household yearly income: $100,000 to $200,000
-            - Annual income before tax: Range from $150,000 to $200,000
-            - Company types: Manufacturing, IT, Construction, Transportation
-            - Job sectors: IT, Information technology, Human resource
-            - Housing: Homeowner
-            - Entertainment: Netflix, Hulu, Amazon Prime, Apple TV+, Disney+
-            - Health conditions: Type 2 diabetes, COPD, migraine
-            - Credit score: 600 to 799
+            survey_context = """you are 1mDC the chatbot who helps with survey. People will ask you about various questions related to survey and you will answer based on data that I give to you. You can also search the internet to come up with answer that are not included in the data.
 
-            Provide concise, accurate responses based on this data."""
+Survey Data:
+Company Types:
+- Manufacturing
+- Information technology
+- Construction
+- Transportation
+
+Job Information:
+- Job descriptions: Information technology, Human resource
+- Job Titles: CTO, chief technology officer, chief information officer
+- Job Responsibility: Director
+- Job sector: IT
+
+Financial Information:
+- Company annual revenue: 100m - 500m
+- Annual income before tax range: 150,000 - 200,000
+- Household yearly income: 100,000 to 200,000
+- Investable assets: more than 500,000, less than 999,999
+- Credit score: 600 to 799
+
+Demographics:
+- Race/Ethnicity: White, Hispanic/Latino
+- Housing: Homeowner
+- Car ownership: Yes
+- Pets: Cat & dog
+- Voter registration: Yes
+- Previous survey participation: No
+
+Entertainment:
+- TV/Streaming weekly watch time: 20 hours plus
+- Video subscriptions: Netflix, Hulu, Amazon Prime, Apple TV+, Disney+
+- Music streaming: YouTube Music, Spotify
+- TV subscriptions: DishTV, Fios-verizon, Direct TV
+- Movies in theater (12 months): 10
+- Movies in theater (6 months): 4-6
+- Movies in theater (2 months): 1
+- Video gaming: 10-20 hours per week
+
+Education and Health:
+- Highest education: Postgraduate/Masters/MA
+- Health conditions: Type 2 diabetes, COPD, migraine
+
+If you find any question similar to this, you will respond based on the above output. If you find questions related to survey that are not included, search the internet to give the right answer.
+
+Remember to:
+1. Always provide specific answers based on the survey data
+2. If the exact data isn't available, mention that and provide a relevant internet-based response
+3. Keep responses concise and accurate"""
 
             session = self.model.start_chat(history=[
                 {
@@ -89,13 +134,18 @@ class ChatHandler:
         """
         try:
             # Log incoming question
-            logger.info(f"Processing question of length: {len(question)}")
+            logger.info(f"Processing question: {question[:50]}...")
 
             # Sanitize and validate input
             cleaned_question = self.validator.sanitize_input(question)
             if not self.validator.validate_question(cleaned_question):
                 logger.warning("Invalid question format")
                 return "I'm sorry, but I couldn't understand your question. Could you please rephrase it?"
+
+            # Categorize the question
+            category = self.validator.categorize_question(cleaned_question)
+            if category:
+                logger.info(f"Question categorized as: {category}")
 
             # Direct responses for specific questions
             lower_question = cleaned_question.lower()
