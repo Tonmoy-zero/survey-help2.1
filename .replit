@@ -15,6 +15,18 @@ author = "agent"
 task = "workflow.run"
 args = "Survey Chatbot"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Debug Chatbot"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Interactive Survey Chatbot"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Input Test"
+
 [[workflows.workflow]]
 name = "Survey Chatbot"
 author = "agent"
@@ -28,6 +40,48 @@ task = "packager.installForAll"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "python main.py"
+
+[[workflows.workflow]]
+name = "Debug Chatbot"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python debug_chat.py"
+
+[[workflows.workflow]]
+name = "Interactive Survey Chatbot"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python3 -u main.py"
+
+[[workflows.workflow]]
+name = "Input Test"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python3 -u test_input.py"
 
 [deployment]
 run = ["sh", "-c", "python main.py"]
