@@ -160,11 +160,6 @@ Remember to:
                 logger.info("Providing direct response for health conditions")
                 return "Based on the survey data, the reported health conditions are: Type 2 diabetes, COPD, and migraine."
 
-            # Handle pet-related questions directly
-            if any(term in lower_question for term in ['pet', 'pets', 'animal']):
-                logger.info("Providing direct response for pet question")
-                return "Based on the survey data, the person has both a cat and a dog."
-
             # Get response from model with specific context reminder
             context_reminder = "Remember to answer based on the survey data provided. Be direct and specific in your response."
             full_question = f"{context_reminder} Question: {cleaned_question}"
