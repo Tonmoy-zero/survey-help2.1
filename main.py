@@ -3,7 +3,7 @@ import logging
 from config import verify_api_key
 from chat_handler import ChatHandler
 from error_handler import handle_error
-from flask import Flask
+from flask import Flask, render_template, request, jsonify
 
 # Configure logging
 logging.basicConfig(
@@ -17,40 +17,30 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-
-def get_user_input() -> str:
-    """Get user input with proper error handling."""
-    while True:
-        try:
-            # Print prompt with explicit flush
-            sys.stdout.write("\nQuestion: ")
-            sys.stdout.flush()
-
-            # Read input
-            user_input = input().strip()
-
-            # Log received input length
-            logger.info(f"Received input of length: {len(user_input)}")
-            return user_input
-
-        except EOFError:
-            logger.warning("EOFError encountered")
-            print("\nInput error. Please try again.", flush=True)
-            continue
-        except KeyboardInterrupt:
-            logger.info("Keyboard interrupt received")
-            return "quit"
-        except Exception as e:
-            logger.error(f"Input error: {str(e)}")
-            print(f"\nError reading input: {str(e)}", flush=True)
-            continue
+chat_handler = None
 
 @app.route('/')
 def index():
-    return """
-    <h1>Survey Chatbot</h1>
-    <p>Welcome to the Survey Chatbot! Ask questions about the survey data.</p>
-    """
+    return render_template('index.html')
+
+@app.route('/ask', methods=['POST'])
+def ask():
+    try:
+        data = request.get_json()
+        question = data.get('question', '')
+
+        if not question:
+            return jsonify({'response': 'Please ask a question.'}), 400
+
+        if not chat_handler:
+            return jsonify({'response': 'Chatbot is not initialized properly.'}), 500
+
+        response = chat_handler.process_question(question)
+        return jsonify({'response': response})
+
+    except Exception as e:
+        error_msg = handle_error(e, "processing your question")
+        return jsonify({'response': f"Error: {error_msg}"}), 500
 
 def main():
     """Main entry point for the survey chatbot."""
@@ -61,6 +51,7 @@ def main():
 
         # Initialize chat handler
         logger.info("Initializing chat handler...")
+        global chat_handler
         chat_handler = ChatHandler(api_key)
         logger.info("Chat handler initialized successfully")
 
